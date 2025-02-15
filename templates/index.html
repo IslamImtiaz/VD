@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VD - Video Downloader</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Add Favicon -->
+    <link rel="icon" type="image/x-icon" href="static/11zon_cropped.ico">
+    <!-- For PNG or SVG favicons -->
+    <!-- <link rel="icon" type="image/png" href="path/to/your/favicon.png"> -->
+    <!-- <link rel="icon" type="image/svg+xml" href="path/to/your/favicon.svg"> -->
+</head>
+<body class="bg-gradient-to-br from-blue-100 to-purple-100 min-h-screen">
+    <div class="container mx-auto px-4 py-12 max-w-2xl">
+        <div class="bg-white rounded-xl shadow-lg p-8">
+            <!-- Replace the YouTube logo with your custom logo -->
+            <div class="flex justify-center items-center mb-6">
+                <img src="static/11zon_cropped.png" alt="Your Logo" class="h-12 w-auto mr-3"> <!-- Adjust height (h-12) as needed -->
+                <h1 class="text-3xl font-bold text-gray-800">
+                    Video Downloader
+                </h1>
+            </div>
+
+            <form method="POST" class="space-y-6">
+                <!-- Form inputs and buttons remain the same -->
+                <div>
+                    <input type="text" name="url" 
+                           class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:outline-none"
+                           placeholder="Paste YouTube URL here..." required>
+                </div>
+
+                <div class="space-y-3">
+                    <p class="text-gray-600 font-medium">Select Stream Type:</p>
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <label class="flex-1 cursor-pointer">
+                            <input type="radio" id="video" name="format" value="video" class="peer hidden" checked>
+                            <div class="p-3 rounded-lg border-2 border-gray-200 text-center
+                                      peer-checked:border-blue-500 peer-checked:bg-blue-50
+                                      hover:bg-gray-50 transition-colors">
+                                <i class="fas fa-video text-blue-500"></i>
+                                <span class="ml-2 text-gray-700">Video</span>
+                            </div>
+                        </label>
+
+                        <label class="flex-1 cursor-pointer">
+                            <input type="radio" id="audio" name="format" value="audio" class="peer hidden">
+                            <div class="p-3 rounded-lg border-2 border-gray-200 text-center
+                                      peer-checked:border-blue-500 peer-checked:bg-blue-50
+                                      hover:bg-gray-50 transition-colors">
+                                <i class="fas fa-music text-blue-500"></i>
+                                <span class="ml-2 text-gray-700">Audio</span>
+                            </div>
+                        </label>
+
+                        <label class="flex-1 cursor-pointer">
+                            <input type="radio" id="both" name="format" value="both" class="peer hidden">
+                            <div class="p-3 rounded-lg border-2 border-gray-200 text-center
+                                      peer-checked:border-blue-500 peer-checked:bg-blue-50
+                                      hover:bg-gray-50 transition-colors">
+                                <i class="fas fa-file-video text-blue-500"></i>
+                                <span class="ml-2 text-gray-700">Video + Audio</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" 
+                        class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg
+                               transition-all duration-200 transform hover:scale-[1.02]">
+                    <i class="fas fa-stream mr-2"></i>Get Stream
+                </button>
+            </form>
+
+            {% if video_url or audio_url %}
+            <div class="mt-8 space-y-6 animate-fade-in">
+                {% if video_url %}
+                <div class="space-y-3">
+                    <h3 class="text-lg font-semibold text-gray-800">Watch Online:</h3>
+                    <video controls class="w-full max-w-2xl mx-auto rounded-lg shadow-md aspect-video">
+                        <source src="{{ video_url }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+                {% endif %}
+
+                {% if audio_url %}
+                <div class="space-y-3">
+                    <h3 class="text-lg font-semibold text-gray-800">Listen Online:</h3>
+                    <audio controls class="w-full max-w-lg mx-auto rounded-lg shadow-md">
+                        <source src="{{ audio_url }}" type="audio/mp3">
+                        Your browser does not support the audio tag.
+                    </audio>
+                </div>
+                {% endif %}
+
+                <div class="space-y-4">
+                    <h3 class="text-lg font-semibold text-gray-800 text-center">Download:</h3>
+                    <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                        {% if video_url %}
+                        <a href="{{ video_url }}" download
+                           class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg
+                                  transition-colors duration-200 text-center inline-block">
+                            <i class="fas fa-file-video mr-2"></i>Download Video
+                        </a>
+                        {% endif %}
+                        
+                        {% if audio_url %}
+                        <a href="{{ audio_url }}" download
+                           class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg
+                                  transition-colors duration-200 text-center inline-block">
+                            <i class="fas fa-file-audio mr-2"></i>Download Audio
+                        </a>
+                        {% endif %}
+                    </div>
+                    {% if video_url and audio_url %}
+                    <p class="text-sm text-gray-600 text-center mt-2">
+                        To watch with sound, play both files simultaneously
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <style>
+        @keyframes fade-in {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fade-in 0.3s ease-out;
+        }
+        
+        audio::-webkit-media-controls-panel {
+            background-color: #fff;
+        }
+        audio::-webkit-media-controls-play-button,
+        audio::-webkit-media-controls-mute-button {
+            background-color: #3B82F6;
+            border-radius: 50%;
+        }
+    </style>
+</body>
+</html>
