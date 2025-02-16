@@ -11,15 +11,18 @@ def index():
     if request.method == "POST":
         url = request.form.get("url")
         format_choice = request.form.get("format")
+        browser_choice = request.form.get("browser")  # Get user-selected browser
 
         if not url:
             return "Please enter a YouTube URL", 400
+        if not browser_choice:  # Ensure user selects a browser
+            return "Please select a browser", 400
 
-        # yt-dlp options
         ydl_opts = {
-            'quiet': True, 
+            'quiet': True,
             'noplaylist': True,
-            'cookiefile': 'static/cookies_youtube.txt'  # Specify the path to your cookies file
+            'cookies_from_browser': True,
+            'browser': browser_choice,  # Use user-selected browser
         }
 
         if format_choice == "audio":
@@ -27,14 +30,14 @@ def index():
         elif format_choice == "video":
             ydl_opts['format'] = 'bestvideo'
         elif format_choice == "both":
-            ydl_opts['format'] = 'best[ext=mp4]/best'  # Try finding pre-merged video
+            ydl_opts['format'] = 'best[ext=mp4]/best'
 
         try:
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 info = ydl.extract_info(url, download=False)
                 if format_choice == "both":
                     video_url = info.get('url', None)
-                    if not video_url:  # If no pre-merged video found, get separate streams
+                    if not video_url:  
                         ydl_opts['format'] = 'bestvideo'
                         with yt_dlp.YoutubeDL(ydl_opts) as ydl_video:
                             video_info = ydl_video.extract_info(url, download=False)
@@ -56,3 +59,4 @@ def index():
 
 if __name__ == "__main__":
     app.run(debug=True)
+

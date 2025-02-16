@@ -4,23 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VD - Video Downloader</title>
-    <!-- Added styling resources -->
+    <!-- Tailwind CSS & Font Awesome -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="icon" type="image/x-icon" href="static/11zon_cropped.ico">
 </head>
-<body class="bg-gradient-to-br from-blue-100 to-purple-100 min-h-screen">
+<body class="bg-gradient-to-br from-blue-100 to-purple-100 min-h-screen flex justify-center items-center">
+
     <div class="container mx-auto px-4 py-12 max-w-2xl">
         <div class="bg-white rounded-xl shadow-lg p-8">
             <!-- Logo Header -->
             <div class="flex justify-center items-center mb-6">
                 <img src="static/11zon_cropped.png" alt="Your Logo" class="h-12 w-auto mr-3">
-                <h1 class="text-3xl font-bold text-gray-800">
-                    Video Downloader
-                </h1>
+                <h1 class="text-3xl font-bold text-gray-800">Video Downloader</h1>
             </div>
 
-            <!-- Form (maintained functionality) -->
+            <!-- Form -->
             <form method="POST" class="space-y-6">
                 <div>
                     <input type="text" name="url" 
@@ -28,35 +27,32 @@
                            placeholder="Paste YouTube URL here..." required>
                 </div>
 
-                <!-- Stream Options (Video, Audio, Video + Audio) -->
+                <!-- Stream Options -->
                 <div class="space-y-3">
                     <p class="text-gray-600 font-medium">Select Stream Type:</p>
                     <div class="flex flex-col sm:flex-row gap-3">
                         <label class="flex-1 cursor-pointer">
-                            <input type="radio" id="video" name="format" value="video" class="peer hidden" checked>
+                            <input type="radio" name="format" value="video" class="peer hidden" checked>
                             <div class="p-3 rounded-lg border-2 border-gray-200 text-center
-                                      peer-checked:border-blue-500 peer-checked:bg-blue-50
-                                      hover:bg-gray-50 transition-colors">
+                                      peer-checked:border-blue-500 peer-checked:bg-blue-50 hover:bg-gray-50 transition">
                                 <i class="fas fa-video text-blue-500"></i>
                                 <span class="ml-2 text-gray-700">Video</span>
                             </div>
                         </label>
 
                         <label class="flex-1 cursor-pointer">
-                            <input type="radio" id="audio" name="format" value="audio" class="peer hidden">
+                            <input type="radio" name="format" value="audio" class="peer hidden">
                             <div class="p-3 rounded-lg border-2 border-gray-200 text-center
-                                      peer-checked:border-blue-500 peer-checked:bg-blue-50
-                                      hover:bg-gray-50 transition-colors">
+                                      peer-checked:border-blue-500 peer-checked:bg-blue-50 hover:bg-gray-50 transition">
                                 <i class="fas fa-music text-blue-500"></i>
                                 <span class="ml-2 text-gray-700">Audio</span>
                             </div>
                         </label>
 
                         <label class="flex-1 cursor-pointer">
-                            <input type="radio" id="both" name="format" value="both" class="peer hidden">
+                            <input type="radio" name="format" value="both" class="peer hidden">
                             <div class="p-3 rounded-lg border-2 border-gray-200 text-center
-                                      peer-checked:border-blue-500 peer-checked:bg-blue-50
-                                      hover:bg-gray-50 transition-colors">
+                                      peer-checked:border-blue-500 peer-checked:bg-blue-50 hover:bg-gray-50 transition">
                                 <i class="fas fa-file-video text-blue-500"></i>
                                 <span class="ml-2 text-gray-700">Video + Audio</span>
                             </div>
@@ -64,15 +60,29 @@
                     </div>
                 </div>
 
+                <!-- Browser Selection -->
+                <div class="space-y-3">
+                    <label for="browser" class="text-gray-600 font-medium">Select Browser:</label>
+                    <select name="browser" id="browser" required 
+                            class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:outline-none">
+                        <option value="" disabled selected>-- Select Browser --</option>
+                        <option value="chrome">Google Chrome</option>
+                        <option value="firefox">Mozilla Firefox</option>
+                        <option value="edge">Microsoft Edge</option>
+                        <option value="brave">Brave</option>
+                    </select>
+                </div>
+
+                <!-- Submit Button -->
                 <button type="submit" 
                         class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg
-                               transition-all duration-200 transform hover:scale-[1.02]">
-                    <i class="fas fa-stream mr-2"></i>Get Stream
+                               transition-all duration-200 transform hover:scale-105">
+                    <i class="fas fa-stream mr-2"></i> Get Stream
                 </button>
             </form>
 
-            <!-- Results Section (maintained functionality) -->
-            {% if video_url %}
+            <!-- Results Section -->
+            {% if video_url or audio_url %}
             <div class="mt-8 space-y-6 animate-fade-in">
                 {% if video_url %}
                 <div class="space-y-3">
@@ -94,6 +104,7 @@
                 </div>
                 {% endif %}
 
+                <!-- Download Section -->
                 <div class="space-y-4">
                     <h3 class="text-lg font-semibold text-gray-800 text-center">Download:</h3>
                     <div class="flex flex-col sm:flex-row gap-3 justify-center">
@@ -101,7 +112,7 @@
                         <a href="{{ video_url }}" download
                            class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg
                                   transition-colors duration-200 text-center inline-block">
-                            <i class="fas fa-file-video mr-2"></i>Download Video
+                            <i class="fas fa-file-video mr-2"></i> Download Video
                         </a>
                         {% endif %}
                         
@@ -109,13 +120,13 @@
                         <a href="{{ audio_url }}" download
                            class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg
                                   transition-colors duration-200 text-center inline-block">
-                            <i class="fas fa-file-audio mr-2"></i>Download Audio
+                            <i class="fas fa-file-audio mr-2"></i> Download Audio
                         </a>
                         {% endif %}
                     </div>
                     {% if video_url and audio_url %}
                     <p class="text-sm text-gray-600 text-center mt-2">
-                        To watch with sound, play both files simultaneously
+                        To watch with sound, play both files simultaneously.
                     </p>
                     {% endif %}
                 </div>
