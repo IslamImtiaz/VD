@@ -16,7 +16,11 @@ def index():
             return "Please enter a YouTube URL", 400
 
         # yt-dlp options
-        ydl_opts = {'quiet': True, 'noplaylist': True}
+        ydl_opts = {
+            'quiet': True, 
+            'noplaylist': True,
+            'cookiefile': 'static/cookies_youtube.txt'  # Specify the path to your cookies file
+        }
 
         if format_choice == "audio":
             ydl_opts['format'] = 'bestaudio'
