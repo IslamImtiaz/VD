@@ -1,3 +1,4 @@
+import os
 from flask import Flask, render_template, request
 import yt_dlp
 
@@ -11,18 +12,19 @@ def index():
     if request.method == "POST":
         url = request.form.get("url")
         format_choice = request.form.get("format")
-        browser_choice = request.form.get("browser")  # Get user-selected browser
 
         if not url:
             return "Please enter a YouTube URL", 400
-        if not browser_choice:  # Ensure user selects a browser
-            return "Please select a browser", 400
+
+        # Load cookies from a file
+        cookies_path = "static/cookies_youtube.txt"
+        if not os.path.exists(cookies_path):
+            return "Cookies file not found!", 500
 
         ydl_opts = {
             'quiet': True,
             'noplaylist': True,
-            'cookies_from_browser': True,
-            'browser': browser_choice,  # Use user-selected browser
+            'cookies': cookies_path,  # Load YouTube cookies
         }
 
         if format_choice == "audio":
@@ -35,28 +37,14 @@ def index():
         try:
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 info = ydl.extract_info(url, download=False)
-                if format_choice == "both":
-                    video_url = info.get('url', None)
-                    if not video_url:  
-                        ydl_opts['format'] = 'bestvideo'
-                        with yt_dlp.YoutubeDL(ydl_opts) as ydl_video:
-                            video_info = ydl_video.extract_info(url, download=False)
-                            video_url = video_info.get('url', None)
-
-                        ydl_opts['format'] = 'bestaudio'
-                        with yt_dlp.YoutubeDL(ydl_opts) as ydl_audio:
-                            audio_info = ydl_audio.extract_info(url, download=False)
-                            audio_url = audio_info.get('url', None)
-                else:
-                    video_url = info.get('url', None)
+                video_url = info.get('url', None)
 
         except Exception as e:
             return f"Error: {str(e)}", 500
 
-        return render_template("index.html", video_url=video_url, audio_url=audio_url)
+        return render_template("index.html", video_url=video_url)
 
-    return render_template("index.html", video_url=None, audio_url=None)
+    return render_template("index.html", video_url=None)
 
 if __name__ == "__main__":
     app.run(debug=True)
-
